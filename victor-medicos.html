@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Victor Augusto Senger — Prontuário Resumido</title>
+<style>
+:root{--bg:#0f172a;--surface:#1e293b;--border:#334155;--text:#e2e8f0;--muted:#94a3b8;--dim:#64748b;--blue:#3b82f6;--cyan:#06b6d4;--green:#10b981;--yellow:#f59e0b;--purple:#7c3aed;--red:#ef4444;--pink:#ec4899;--lime:#84cc16}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px 80px}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#1e1b4b,var(--bg));border-bottom:1px solid var(--border);padding:18px 16px 0;margin:0 -16px 24px}
+.header-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.avatar{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.header h1{font-size:20px;font-weight:700;color:var(--text)}
+.header .sub{font-size:12px;color:var(--dim)}
+.badge-atualizado{margin-left:auto;background:#0f172a;border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--muted);white-space:nowrap}
+
+/* TABS */
+.tabs{display:flex;gap:0}
+.tab{background:none;border:none;padding:10px 18px;cursor:pointer;font-size:13px;color:var(--dim);border-bottom:2px solid transparent;font-family:inherit;transition:color .15s}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.tab:hover:not(.active){color:var(--muted)}
+
+/* SECTIONS */
+.section{display:none}
+.section.active{display:block}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
+.card-title{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+
+/* DIAGNOSES */
+.dx-card{background:var(--bg);border-radius:10px;padding:12px;border:1px solid var(--border)}
+.dx-icon{font-size:22px;margin-bottom:6px}
+.dx-label{font-size:13px;font-weight:600;color:var(--text)}
+.dx-sub{font-size:11px;color:var(--dim);margin-top:2px}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--dim);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:6px 8px;border-bottom:1px solid var(--border)}
+td{padding:9px 8px;border-bottom:1px solid #1e293b;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#ffffff08}
+.status-ativo{background:#ef444420;color:#ef4444;border:1px solid #ef444440;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;white-space:nowrap}
+.status-ok{color:var(--dim);font-size:12px}
+
+/* DOCS */
+.search-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.search-input{flex:1;min-width:180px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit}
+.search-input:focus{border-color:var(--blue)}
+select.filter{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--muted);font-size:12px;font-family:inherit}
+.cat-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{background:none;border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--dim);cursor:pointer;font-family:inherit}
+.chip.sel{font-weight:600}
+.doc-count{font-size:12px;color:var(--dim);margin-bottom:10px}
+.doc-list{max-height:62vh;overflow-y:auto;padding-right:2px}
+.doc-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;background:var(--surface);border:1px solid var(--border);margin-bottom:6px;text-decoration:none;color:var(--text);transition:border-color .15s}
+.doc-item:hover{border-color:var(--blue)}
+.doc-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.doc-nome{font-size:13px;font-weight:500;margin-bottom:3px;word-break:break-word}
+.doc-meta{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.doc-cat{border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600}
+.doc-pasta{font-size:11px;color:var(--dim)}
+.doc-data{font-size:11px;color:#475569}
+.doc-tipo{font-size:10px;color:#475569;background:var(--bg);padding:1px 5px;border-radius:3px}
+.doc-arrow{color:var(--blue);font-size:15px;flex-shrink:0;margin-left:auto}
+
+/* TIMELINE */
+.tl-item{display:flex;gap:12px;margin-bottom:10px}
+.tl-ano{width:38px;flex-shrink:0;text-align:right;color:var(--blue);font-weight:700;font-size:12px;padding-top:1px}
+.tl-line{width:2px;background:var(--border);flex-shrink:0}
+.tl-desc{font-size:13px;color:var(--muted);padding-top:1px}
+
+/* TEAM */
+.team-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;display:flex;gap:8px;align-items:center}
+.team-tipo{font-size:10px;color:var(--dim)}
+.team-nome{font-size:12px;color:var(--text)}
+
+/* ALERT */
+.alert{background:#ef444415;border:1px solid #ef444440;border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start}
+.alert-dot{width:8px;height:8px;border-radius:50%;background:#ef4444;flex-shrink:0;margin-top:5px}
+.alert-text{font-size:13px;color:var(--text)}
+.alert-label{font-size:10px;font-weight:700;color:#ef4444;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+
+@media(max-width:600px){.header-top{flex-wrap:wrap}.badge-atualizado{margin-left:0}.tab{padding:9px 12px;font-size:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="avatar">🩺</div>
+    <div>
+      <h1>Victor Augusto Senger</h1>
+      <div class="sub">Nascido 14/04/2005 · 21 anos · Curitiba, PR</div>
+    </div>
+    <div class="badge-atualizado">Atualizado 19/09/2026</div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('resumo',this)">👤 Resumo</button>
+    <button class="tab" onclick="showTab('quadro',this)">🩺 Quadro Clínico</button>
+    <button class="tab" onclick="showTab('docs',this)">📂 Documentos (155)</button>
+  </div>
+</div>
+
+<!-- ═══ RESUMO ═══ -->
+<div id="resumo" class="section active">
+
+  <div class="alert">
+    <div class="alert-dot"></div>
+    <div>
+      <div class="alert-label">Intercorrência ativa</div>
+      <div class="alert-text">Hematúria persistente desde julho/2026 — Eritrócitos 154,2/µL · Oxalato de Cálcio + · Acompanhamento urológico em curso</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--muted)">📋 DIAGNÓSTICOS</div>
+    <div class="grid2">
+      <div class="dx-card" style="border-color:#7c3aed40">
+        <div class="dx-icon">⚡</div>
+        <div class="dx-label">Epilepsia refratária</div>
+        <div class="dx-sub">Síndrome de Lennox-Gastaut</div>
+      </div>
+      <div class="dx-card" style="border-color:#3b82f640">
+        <div class="dx-icon">🧠</div>
+        <div class="dx-label">Autismo severo (TEA)</div>
+        <div class="dx-sub">Nível 3 — sem linguagem verbal</div>
+      </div>
+      <div class="dx-card" style="border-color:#f59e0b40">
+        <div class="dx-icon">🦴</div>
+        <div class="dx-label">Síndrome de Ehlers-Danlos</div>
+        <div class="dx-sub">Hipermobilidade articular</div>
+      </div>
+      <div class="dx-card" style="border-color:#06b6d440">
+        <div class="dx-icon">👁</div>
+        <div class="dx-label">Cegueira total (ROP)</div>
+        <div class="dx-sub">Retinopatia da prematuridade</div>
+      </div>
+      <div class="dx-card" style="border-color:#10b98140">
+        <div class="dx-icon">♿</div>
+        <div class="dx-label">Paralisia cerebral</div>
+        <div class="dx-sub">Atrofia em pés e pernas</div>
+      </div>
+      <div class="dx-card" style="border-color:#ec489940">
+        <div class="dx-icon">🫄</div>
+        <div class="dx-label">Dismotilidade intestinal</div>
+        <div class="dx-sub">Diagnóstico jan/2026 — em manejo</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--muted)">👥 EQUIPE DE CUIDADOS</div>
+    <div class="grid3">
+      <div class="team-card"><span style="font-size:18px">🧠</span><div><div class="team-tipo">Neurologia</div><div class="team-nome">Dra. Vera Terra</div></div></div>
+      <div class="team-card"><span style="font-size:18px">🏠</span><div><div class="team-tipo">Home Care</div><div class="team-nome">PluralCare</div></div></div>
+      <div class="team-card"><span style="font-size:18px">💙</span><div><div class="team-tipo">Plano de Saúde</div><div class="team-nome">Bradesco Saúde</div></div></div>
+      <div class="team-card"><span style="font-size:18px">🦾</span><div><div class="team-tipo">Fisioterapia</div><div class="team-nome">Domiciliar</div></div></div>
+      <div class="team-card"><span style="font-size:18px">🗣</span><div><div class="team-tipo">Fonoaudiologia</div><div class="team-nome">Domiciliar</div></div></div>
+      <div class="team-card"><span style="font-size:18px">🖐</span><div><div class="team-tipo">Terapia Ocupacional</div><div class="team-nome">Domiciliar</div></div></div>
+      <div class="team-card"><span style="font-size:18px">💬</span><div><div class="team-tipo">Psicologia</div><div class="team-nome">Domiciliar</div></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--muted)">📅 LINHA DO TEMPO</div>
+    <div class="tl-item"><div class="tl-ano">2005</div><div class="tl-line"></div><div class="tl-desc">Nascimento prematuro extremo (25 sem) · 820g · UTI neonatal 110 dias · Derrame intracraniano, hidrocefalia, PCA</div></div>
+    <div class="tl-item"><div class="tl-ano">2006</div><div class="tl-line"></div><div class="tl-desc">Diagnóstico Síndrome de West → evolução para Lennox-Gastaut</div></div>
+    <div class="tl-item"><div class="tl-ano">2015</div><div class="tl-line"></div><div class="tl-desc">RNM cerebral · EEGs seriados · Encaminhamento VNS e dieta cetogênica</div></div>
+    <div class="tl-item"><div class="tl-ano">2016</div><div class="tl-line"></div><div class="tl-desc">Início do óleo de cannabis medicinal — redução expressiva das crises</div></div>
+    <div class="tl-item"><div class="tl-ano">2024</div><div class="tl-line"></div><div class="tl-desc">2 internações UTI (março e agosto) por mal convulsivo</div></div>
+    <div class="tl-item"><div class="tl-ano">2026</div><div class="tl-line"></div><div class="tl-desc">Internação jan + internação mar · Diagnóstico dismotilidade intestinal · Hematúria persistente (jul) · TC Abdômen (ago)</div></div>
+  </div>
+</div>
+
+<!-- ═══ QUADRO CLÍNICO ═══ -->
+<div id="quadro" class="section">
+
+  <div class="card" style="border-color:#7c3aed44">
+    <div class="card-title" style="color:#a78bfa">⚡ Última Crise Registrada</div>
+    <div class="grid2" style="margin-bottom:10px">
+      <div><div style="font-size:11px;color:var(--dim)">Data</div><div style="font-size:15px;font-weight:600">12/03/2026</div></div>
+      <div><div style="font-size:11px;color:var(--dim)">Horário</div><div style="font-size:15px">16h56</div></div>
+      <div><div style="font-size:11px;color:var(--dim)">Duração</div><div style="font-size:15px">18 min</div></div>
+      <div><div style="font-size:11px;color:var(--dim)">Tipo</div><div style="font-size:13px">Tônico-clônica generalizada</div></div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);border-top:1px solid var(--border);padding-top:10px">Precedida de internação UTI. Alta 13/01/2026 após 2ª internação do ano.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--yellow)">⚠️ Intercorrências 2026</div>
+    <table>
+      <thead><tr><th>Período</th><th>Ocorrência</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>08/2026</td><td>TC Abdômen 20/08 — <a href="https://drive.google.com/file/d/17ccSJFfh1Yaqg4IwXMG2BKGQWGg-zTFV/view?usp=drivesdk" target="_blank">ver laudo</a></td><td><span class="status-ok">✓</span></td></tr>
+        <tr><td>07/2026</td><td>Hematúria — Eritrócitos 154,2/µL · Oxalato de Cálcio+ · <a href="https://drive.google.com/file/d/19zJJnpCOnQLC02_Frh1aLpHvqI4D5DiG/view?usp=drivesdk" target="_blank">exame</a></td><td><span class="status-ativo">ATIVO</span></td></tr>
+        <tr><td>07/2026</td><td>TC Abdômen 20/07 — acompanhamento urológico · <a href="https://drive.google.com/file/d/1CNPrpTixm-EVIrHT2m-klS5edYbJ_v8F/view?usp=drivesdk" target="_blank">ver</a></td><td><span class="status-ok">✓</span></td></tr>
+        <tr><td>03/2026</td><td>Mal convulsivo — internação UTI, alta 13/03</td><td><span class="status-ok">✓</span></td></tr>
+        <tr><td>01/2026</td><td>Internação hospitalar por crise convulsiva · <a href="https://drive.google.com/file/d/1xUseLHuL7SfxU9IsrpUyurt2x13TGM2Q/view?usp=drivesdk" target="_blank">resumo de alta</a></td><td><span class="status-ok">✓</span></td></tr>
+        <tr><td>01/2026</td><td>Diagnóstico dismotilidade intestinal · Enema de glicerol iniciado</td><td><span class="status-ativo">CRÔNICO</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--cyan)">🧪 Exames Recentes</div>
+    <table>
+      <thead><tr><th>Exame</th><th>Data</th><th>Resultado / Obs</th><th></th></tr></thead>
+      <tbody>
+        <tr><td>TC Abdômen</td><td>20/08/2026</td><td style="color:var(--muted)">Em avaliação</td><td><a href="https://drive.google.com/file/d/17ccSJFfh1Yaqg4IwXMG2BKGQWGg-zTFV/view?usp=drivesdk" target="_blank">↗</a></td></tr>
+        <tr><td>TC Abdômen (jul)</td><td>20/07/2026</td><td style="color:var(--muted)">Acompanhamento urológico</td><td><a href="https://drive.google.com/file/d/1CNPrpTixm-EVIrHT2m-klS5edYbJ_v8F/view?usp=drivesdk" target="_blank">↗</a></td></tr>
+        <tr><td>Urina I + Urocultura</td><td>15/07/2026</td><td style="color:#f59e0b">⚠️ Eritrócitos 154,2/µL · Oxalato Ca+</td><td><a href="https://drive.google.com/file/d/19zJJnpCOnQLC02_Frh1aLpHvqI4D5DiG/view?usp=drivesdk" target="_blank">↗</a></td></tr>
+        <tr><td>Hemograma + Urina</td><td>04/03/2026</td><td style="color:var(--muted)">Pós-internação UTI março</td><td><a href="https://drive.google.com/file/d/1ZxuA-NIlb_5kCxNeKcMskoypQb3uH5oU/view?usp=drivesdk" target="_blank">↗</a></td></tr>
+        <tr><td>Urina 26/02/2026</td><td>26/02/2026</td><td style="color:var(--muted)">Realizado</td><td><a href="https://drive.google.com/file/d/1yTIXNFdSE6EEwNte7ddjdSv9ZbyApN5N/view?usp=drivesdk" target="_blank">↗</a></td></tr>
+        <tr><td>Hemogramas UTI jan</td><td>04–12/01/2026</td><td style="color:var(--muted)">Série durante internação</td><td><a href="https://drive.google.com/file/d/1WrXe9x7MnEAyLeZXglNY1w_TjreZClff/view?usp=drivesdk" target="_blank">↗</a></td></tr>
+        <tr><td>Prontuários 2025–2026</td><td>nov/25–jul/26</td><td style="color:var(--muted)">7 prontuários mensais disponíveis</td><td><a href="https://drive.google.com/file/d/11e1D3ebk1NVC6wHHCzbL1gqNvJVaORDe/view?usp=drivesdk" target="_blank">↗</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--green)">💊 Medicações Atuais</div>
+    <table>
+      <thead><tr><th>Medicamento</th><th>Via</th><th>Obs</th></tr></thead>
+      <tbody>
+        <tr><td>Canabidiol (CBD)</td><td>VO</td><td style="color:var(--muted)">Cannabis medicinal — principal antiepiléptico</td></tr>
+        <tr><td>Clobazam</td><td>VO</td><td style="color:var(--muted)">Antiepiléptico</td></tr>
+        <tr><td>Valproato de sódio</td><td>VO</td><td style="color:var(--muted)">Antiepiléptico</td></tr>
+        <tr><td>Enema de glicerol</td><td>Retal</td><td style="color:var(--muted)">Dismotilidade intestinal — rotina</td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:11px;color:#475569;margin-top:10px">* Doses conforme última prescrição — verificar prontuário atualizado</div>
+  </div>
+</div>
+
+<!-- ═══ DOCUMENTOS ═══ -->
+<div id="docs" class="section">
+  <div class="search-row">
+    <input type="text" class="search-input" id="busca" placeholder="🔍 Buscar por nome ou pasta..." oninput="filtrar()">
+    <select class="filter" id="selCat" onchange="filtrar()"><option value="">Todas as categorias</option></select>
+    <select class="filter" id="selPasta" onchange="filtrar()"><option value="">Todas as pastas</option></select>
+  </div>
+  <div class="cat-chips" id="chips"></div>
+  <div class="doc-count" id="docCount"></div>
+  <div class="doc-list" id="docList"></div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+// ══ DADOS ══
+const DOCS=[
+{id:1,n:'Anexo 1_Certidão de Nascimento.pdf',p:'Victor',c:'Documento Pessoal',t:'PDF',d:'13/04/2015',l:'https://drive.google.com/file/d/1IgX2dES-DBHA9FjYv78df7Rhp5lNpR74/view?usp=drivesdk'},
+  {id:2,n:'2024_06_29_00_31_10_6_G6t2hk.mp4',p:'Victor/camera_victor/com crise',c:'Outros',t:'MP4',d:'29/06/2024',l:'https://drive.google.com/file/d/1ndiR-YzdqGWxPaU8UWYU4cVkBVSGwfzm/view?usp=drivesdk'},
+  {id:3,n:'2024_06_29_00_35_59_1_ZHmGX7.mp4',p:'Victor/camera_victor/com crise',c:'Outros',t:'MP4',d:'29/06/2024',l:'https://drive.google.com/file/d/15eP7mnPvAQt9OkxmU3NZ_KB8jVZXAeV9/view?usp=drivesdk'},
+  {id:4,n:'IMG_2299.PNG',p:'Victor/camera_victor/com crise',c:'Outros',t:'PNG',d:'29/06/2024',l:'https://drive.google.com/file/d/1bCU5V8T9NcSf3s0jH1t9ymfidioFrIjo/view?usp=drivesdk'},
+  {id:5,n:'2024_06_29_20_04_00_1_DKiszn.mp4',p:'Victor/camera_victor/sem crise',c:'Outros',t:'MP4',d:'30/06/2024',l:'https://drive.google.com/file/d/1JM_z7Uaf60FBDp7FrmWTfvburtCjfqbp/view?usp=drivesdk'},
+  {id:6,n:'2024_06_29_20_05_03_6_h3Cgly.mp4',p:'Victor/camera_victor/sem crise',c:'Outros',t:'MP4',d:'30/06/2024',l:'https://drive.google.com/file/d/1B6E4J05q5w8zfpPZD-B1vs5SLQF9cJev/view?usp=drivesdk'},
+  {id:7,n:'2024_06_29_20_06_17_6_75duFl.mp4',p:'Victor/camera_victor/sem crise',c:'Outros',t:'MP4',d:'30/06/2024',l:'https://drive.google.com/file/d/1F3aWRgW7PfISJzTzrjU3gsBMD-gtHanp/view?usp=drivesdk'},
+  {id:8,n:'2024_06_29_20_07_31_4_WsG5DS.mp4',p:'Victor/camera_victor/sem crise',c:'Outros',t:'MP4',d:'30/06/2024',l:'https://drive.google.com/file/d/1bXf07ZaboJ5NpIHDbrDAvdiWgKzIFhDQ/view?usp=drivesdk'},
+  {id:9,n:'2024_06_29_20_08_05_1_YWqj6d.mp4',p:'Victor/camera_victor/sem crise',c:'Outros',t:'MP4',d:'30/06/2024',l:'https://drive.google.com/file/d/1-gDq4rtJEU7LGQMwtyMTNVX5Lg4hnjtR/view?usp=drivesdk'},
+  {id:10,n:'Carteira de vacinas_Victor.pdf',p:'Victor',c:'Documento Pessoal',t:'PDF',d:'01/08/2024',l:'https://drive.google.com/file/d/1GDRltIc4gTXmS7FgF7yUFSfTRMmQD5Bv/view?usp=drivesdk'},
+  {id:11,n:'2024_Bradesco_Autorização Geral VICTOR AUGUSTO SENGER.pdf',p:'Victor/Documentos Home Care',c:'Outros',t:'PDF',d:'30/07/2026',l:'https://drive.google.com/file/d/1f831R2kot0CUN87OR2IsDCsW7qMGf9-L/view?usp=drivesdk'},
+  {id:12,n:'2024_LarEsaude_Aceite_de_PAD_VICTOR_AUGUSTO_SENGER_assinado.pdf',p:'Victor/Documentos Home Care',c:'Outros',t:'PDF',d:'30/07/2026',l:'https://drive.google.com/file/d/1_fL6KpDdye0TRwLqN5RTchjql-Y7bPIz/view?usp=drivesdk'},
+  {id:13,n:'2024_LarEsaude_Autorização de Médico Assistente VICTOR AUGUSTO SENGER.pdf',p:'Victor/Documentos Home Care',c:'Outros',t:'PDF',d:'30/07/2026',l:'https://drive.google.com/file/d/1RHuB3dotQi26j2vwiYb3KQYxlFveHL4c/view?usp=drivesdk'},
+  {id:14,n:'2025_Pluralcare_TERMO_DE_ATENDIMENTO_DOMICILIAR__VICTOR_AUGUSTO_SENGER_1755007368282938.pdf',p:'Victor/Documentos Home Care',c:'Outros',t:'PDF',d:'30/07/2026',l:'https://drive.google.com/file/d/1F1HE7f222n2koMFaG1nCo-Lb5gFJakoI/view?usp=drivesdk'},
+  {id:15,n:'2026_PluralCare_Reimplantacao_TERMO_VICTOR_AUGUSTO_1770651008890586.pdf',p:'Victor/Documentos Home Care',c:'Outros',t:'PDF',d:'30/07/2026',l:'https://drive.google.com/file/d/1TuQ6ResCvLpR8N9WvQZecS-a15fa2WDs/view?usp=drivesdk'},
+  {id:16,n:'2026_PluralCare_Reimplantacao_TERMO_VICTOR_AUGUSTO_1770651008890586_assinado.pdf',p:'Victor/Documentos Home Care',c:'Outros',t:'PDF',d:'30/07/2026',l:'https://drive.google.com/file/d/1tEYblocv18ucl0h8nGtbULx6UuStQ2fo/view?usp=drivesdk'},
+  {id:17,n:'Carta Resultado-ambulância.pdf',p:'Victor/documentosBradesco',c:'Outros',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1a5AJxeoVqrtmQkPvHl2FrED1Msqoh-qn/view?usp=drivesdk'},
+  {id:18,n:'Carta Resultado-fisio-22.pdf',p:'Victor/documentosBradesco',c:'Outros',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1_cSnM0A7h-qIVbd33OcAx9RH53eKRCRS/view?usp=drivesdk'},
+  {id:19,n:'Carta Resultado0312.pdf',p:'Victor/documentosBradesco',c:'Outros',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1qdS7Ln-UdJn1op93WpQ07_c4B3_8zVUx/view?usp=drivesdk'},
+  {id:20,n:'Carta Resultado0319.pdf',p:'Victor/documentosBradesco',c:'Outros',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1wVXozCzbn9SUezb4VKTqkMfW7Qyrgs9f/view?usp=drivesdk'},
+  {id:21,n:'Carta Resultado0326.pdf',p:'Victor/documentosBradesco',c:'Outros',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1AcbY-HxQWxcK3qT3rJjdjeGUuc8QQYJV/view?usp=drivesdk'},
+  {id:22,n:'Carta Resultado0402.pdf',p:'Victor/documentosBradesco',c:'Outros',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1S0t2EU6TDJHfmb9DXr-PTH5Y0XHB7r8q/view?usp=drivesdk'},
+  {id:23,n:'5AB5D151-9B00-4FA1-94E4-CA89544AF48C.JPG',p:'Victor/Fotos/Lesão nas costas',c:'Outros',t:'JPG',d:'03/04/2026',l:'https://drive.google.com/file/d/1AFNoeycu1q8wUV8fc0HNDmA0gYUZVzug/view?usp=drivesdk'},
+  {id:24,n:'B4709EB8-B56B-4B5C-8857-71CC604406C7.JPG',p:'Victor/Fotos/Lesão nas costas',c:'Outros',t:'JPG',d:'03/04/2026',l:'https://drive.google.com/file/d/1pFWDeG-pVR4ug0GAvb2gu0rCeP1asIDi/view?usp=drivesdk'},
+  {id:25,n:'IMG_8395.heic',p:'Victor/Fotos/Lesão nas costas',c:'Outros',t:'HEIC',d:'03/04/2026',l:'https://drive.google.com/file/d/19xcz9T9Ls0zQyyvOlO9Ddwz1wQpvfdI4/view?usp=drivesdk'},
+  {id:26,n:'IMG_8396.heic',p:'Victor/Fotos/Lesão nas costas',c:'Outros',t:'HEIC',d:'03/04/2026',l:'https://drive.google.com/file/d/1JB6g8_sdjXCCceI2QeJkgtT46RjOIac1/view?usp=drivesdk'},
+  {id:27,n:'IMG_8397.heic',p:'Victor/Fotos/Lesão nas costas',c:'Outros',t:'HEIC',d:'03/04/2026',l:'https://drive.google.com/file/d/100cOO0gJ5j5HY4LK7_TFdM0FJ4SjfAeo/view?usp=drivesdk'},
+  {id:28,n:'IMG_8398.heic',p:'Victor/Fotos/Lesão nas costas',c:'Outros',t:'HEIC',d:'03/04/2026',l:'https://drive.google.com/file/d/11Vy0deX0UpLYHEtjYCGwwWV3ZS8WmNMD/view?usp=drivesdk'},
+  {id:29,n:'IMG_8420.heic',p:'Victor/Fotos/Lesão nas costas',c:'Outros',t:'HEIC',d:'03/04/2026',l:'https://drive.google.com/file/d/1q_5kLeA9Qetqgp1Eg9PfgnEF8-4mkcdq/view?usp=drivesdk'},
+  {id:30,n:'IMG_8421.heic',p:'Victor/Fotos/Lesão nas costas',c:'Outros',t:'HEIC',d:'03/04/2026',l:'https://drive.google.com/file/d/15wCbf64IbDdUJHM4VSuiqToO8jzH6-YY/view?usp=drivesdk'},
+  {id:31,n:'IMG_8422.heic',p:'Victor/Fotos/Lesão nas costas',c:'Outros',t:'HEIC',d:'03/04/2026',l:'https://drive.google.com/file/d/1hsrHV8C4IXbIgBD0aQAOg92kGoIpNhRf/view?usp=drivesdk'},
+  {id:32,n:'IMG_8423.heic',p:'Victor/Fotos/Lesão nas costas',c:'Outros',t:'HEIC',d:'03/04/2026',l:'https://drive.google.com/file/d/1X6xyFXoiqTARZ8ftdfK2rt0B1vbg-2cw/view?usp=drivesdk'},
+  {id:33,n:'IMG_8424.heic',p:'Victor/Fotos/Lesão nas costas',c:'Outros',t:'HEIC',d:'03/04/2026',l:'https://drive.google.com/file/d/17u92oETKLJKRrslNYTVFrUHkxHaWcgOZ/view?usp=drivesdk'},
+  {id:34,n:'IMG_8427.heic',p:'Victor/Fotos/Lesão nas costas',c:'Outros',t:'HEIC',d:'03/04/2026',l:'https://drive.google.com/file/d/1D7n5wp4N-lj2GhXi_8ylrKFmLuD8pjpE/view?usp=drivesdk'},
+  {id:35,n:'IMG_8432.heic',p:'Victor/Fotos/Lesão nas costas',c:'Outros',t:'HEIC',d:'03/04/2026',l:'https://drive.google.com/file/d/1-x62YbTE0aLAUtrmf3E3QXeF8HtKyEHh/view?usp=drivesdk'},
+  {id:36,n:'IMG_8433.heic',p:'Victor/Fotos/Lesão nas costas',c:'Outros',t:'HEIC',d:'03/04/2026',l:'https://drive.google.com/file/d/11tqwPgzmsDhAsIOHgDKIzKWLMy23Lyry/view?usp=drivesdk'},
+  {id:37,n:'IMG_8434.heic',p:'Victor/Fotos/Lesão nas costas',c:'Outros',t:'HEIC',d:'03/04/2026',l:'https://drive.google.com/file/d/18Wd9YX5BePQBmBhMqIkCkYNlfp6TKa5T/view?usp=drivesdk'},
+  {id:38,n:'IMG_8435.heic',p:'Victor/Fotos/Lesão nas costas',c:'Outros',t:'HEIC',d:'03/04/2026',l:'https://drive.google.com/file/d/1rMbUsqaf-r5uLFvShk4UIzBKZFYsCc08/view?usp=drivesdk'},
+  {id:39,n:'Histórico Médico Victor A Senger.docx',p:'Victor/Historicos_Textos/antigos',c:'Outros',t:'Word (.docx)',d:'12/05/2016',l:'https://docs.google.com/document/d/1HFgM9laNAjtc3l8ROoDVI-S88uuuiaO-/edit?usp=drivesdk&ouid=105686559438517194444&rtpof=true&sd=true'},
+  {id:40,n:'Histórico Médico Victor A Senger.pages',p:'Victor/Historicos_Textos/antigos',c:'Outros',t:'PAGES',d:'30/01/2020',l:'https://drive.google.com/file/d/1HbOolDnIBoA3JX8U_5KlHbhcH518-1ss/view?usp=drivesdk'},
+  {id:41,n:'Histórico Médico Victor A Senger.pdf',p:'Victor/Historicos_Textos/antigos',c:'Outros',t:'PDF',d:'04/11/2019',l:'https://drive.google.com/file/d/1I86QKZ0560JENIOEF2wOzMFpfpxZgmWq/view?usp=drivesdk'},
+  {id:42,n:'Histórico Victor A Senger.docx',p:'Victor/Historicos_Textos/antigos',c:'Outros',t:'Word (.docx)',d:'10/08/2016',l:'https://docs.google.com/document/d/1GumnBIzCs719etN5P75Xlw9PBrVW8FI3/edit?usp=drivesdk&ouid=105686559438517194444&rtpof=true&sd=true'},
+  {id:43,n:'Histórico do Victor Augusto',p:'Victor/Historicos_Textos/antigos',c:'Histórico Médico',t:'Google Docs',d:'01/01/2025',l:'https://docs.google.com/document/d/102SqtCTNuW2YKI16DnioADyCP5CMcoel8NZ-jiLIhLk/edit?usp=drivesdk'},
+  {id:44,n:'Resumo Victor2.docx',p:'Victor/Historicos_Textos/antigos',c:'Histórico Médico',t:'Word (.docx)',d:'13/05/2016',l:'https://docs.google.com/document/d/1GfGTlW3mKrIyR67C4x4nNsWp6XH852OD/edit?usp=drivesdk&ouid=105686559438517194444&rtpof=true&sd=true'},
+  {id:45,n:'Dossie Victor Senger.docx',p:'Victor/Historicos_Textos',c:'Outros',t:'Word (.docx)',d:'03/05/2026',l:'https://docs.google.com/document/d/1SjQ4HgMpPEU6JrOwe716xFqIETTqmAlG/edit?usp=drivesdk&ouid=105686559438517194444&rtpof=true&sd=true'},
+  {id:46,n:'Historico_Victor_Senger.docx',p:'Victor/Historicos_Textos',c:'Outros',t:'Word (.docx)',d:'03/05/2026',l:'https://docs.google.com/document/d/1qbiuLFdKIONNS-5pQV8GcKdB8fkxMPpO/edit?usp=drivesdk&ouid=105686559438517194444&rtpof=true&sd=true'},
+  {id:47,n:'Relatório de Monitoramento do Victor',p:'Victor/Historicos_Textos',c:'Histórico Médico',t:'Google Docs',d:'18/01/2025',l:'https://docs.google.com/document/d/1_1EevHmBiJXXSHKs5WD2_LrFhOl39e3JIxJ1e7CgMVk/edit?usp=drivesdk'},
+  {id:48,n:'2005_Resumo Alta.pdf',p:'Victor/Internamentos',c:'Histórico Médico',t:'PDF',d:'19/03/2026',l:'https://drive.google.com/file/d/1IAkRW0542Pft7BZXyVVFwvFTnVITx5GC/view?usp=drivesdk'},
+  {id:49,n:'2024 - Resumo de Alta UTI.pdf',p:'Victor/Internamentos',c:'Histórico Médico',t:'PDF',d:'18/03/2026',l:'https://drive.google.com/file/d/1mk7KdTGhyaA_Nr2drTpSUJ6Jdpp51kw3/view?usp=drivesdk'},
+  {id:50,n:'2026_01_resumo_de_alta.pdf',p:'Victor/Internamentos',c:'Histórico Médico',t:'PDF',d:'13/08/2026',l:'https://drive.google.com/file/d/1xUseLHuL7SfxU9IsrpUyurt2x13TGM2Q/view?usp=drivesdk'},
+  {id:51,n:'2026_08_evolucao.pdf',p:'Victor/Internamentos',c:'Outros',t:'PDF',d:'13/08/2026',l:'https://drive.google.com/file/d/1khQkWTpelnRPo6wznWcogCz_xfGAYbaZ/view?usp=drivesdk'},
+  {id:52,n:'2026_08_resumo de alta transferencia',p:'Victor/Internamentos',c:'Histórico Médico',t:'PDF',d:'13/08/2026',l:'https://drive.google.com/file/d/1WIn9pJzEvHF9tDw9I4WR4_AaxbcqiU4-/view?usp=drivesdk'},
+  {id:53,n:'ABRACE_Ficha Paciente.pdf',p:'Victor/Laudos e Exames/2005-2016',c:'Outros',t:'PDF',d:'13/05/2016',l:'https://drive.google.com/file/d/1I0LNxcdyHxOmtlLmo7GdMrbC6MDB2dr0/view?usp=drivesdk'},
+  {id:54,n:'ABRACE_Termo Responabilidade Pais Victor A Senger.pdf',p:'Victor/Laudos e Exames/2005-2016',c:'Outros',t:'PDF',d:'13/05/2016',l:'https://drive.google.com/file/d/1I4tT_ZM3jTDUTiQ6oCy8SqO_7hVb9-Oh/view?usp=drivesdk'},
+  {id:55,n:'Anexo 10_EEG 1507.pdf',p:'Victor/Laudos e Exames/2005-2016',c:'Exame de Imagem',t:'PDF',d:'12/05/2016',l:'https://drive.google.com/file/d/1HprOukzfDouwwdNsQuZbuKDzMUh8HTAc/view?usp=drivesdk'},
+  {id:56,n:'Anexo 10_fotos.pages',p:'Victor/Laudos e Exames/2005-2016',c:'Outros',t:'PAGES',d:'12/05/2016',l:'https://drive.google.com/file/d/1IV5pk-DUbtnG5U7NiXdCpkEoiUuIibWY/view?usp=drivesdk'},
+  {id:57,n:'Anexo 11_Encaminhamento Psicológa Autismo.pdf',p:'Victor/Laudos e Exames/2005-2016',c:'Encaminhamento',t:'PDF',d:'07/08/2015',l:'https://drive.google.com/file/d/1Hd_WqTGfZJpO3nWMF2C84olI7__CwhRK/view?usp=drivesdk'},
+  {id:58,n:'Anexo 12_Encaminhamento Dieta Cetogênica.pdf',p:'Victor/Laudos e Exames/2005-2016',c:'Encaminhamento',t:'PDF',d:'07/08/2015',l:'https://drive.google.com/file/d/1HkCCkzXqRiU5JmyO-i8gtQOKO231K8oh/view?usp=drivesdk'},
+  {id:59,n:'Anexo 13_Encaminhamento VNS.pdf',p:'Victor/Laudos e Exames/2005-2016',c:'Encaminhamento',t:'PDF',d:'07/08/2015',l:'https://drive.google.com/file/d/1HEqN383g0YGZCU8T1OnR3cNZi2Z_Jqhl/view?usp=drivesdk'},
+  {id:60,n:'Anexo 14_RNM_1508_imagens.pdf',p:'Victor/Laudos e Exames/2005-2016',c:'Exame de Imagem',t:'PDF',d:'19/08/2015',l:'https://drive.google.com/file/d/1I-TJzAxDyMjkVOrFKBg1L5K2nYoHhsS9/view?usp=drivesdk'},
+  {id:61,n:'Anexo 15_RNM_1508_Laudo.pdf',p:'Victor/Laudos e Exames/2005-2016',c:'Exame de Imagem',t:'PDF',d:'19/08/2015',l:'https://drive.google.com/file/d/1IcTKDKPErS7v60HQPydO4HDV4jsuqIY4/view?usp=drivesdk'},
+  {id:62,n:'Anexo 3_EEG 0509.pdf',p:'Victor/Laudos e Exames/2005-2016',c:'Exame de Imagem',t:'PDF',d:'11/05/2016',l:'https://drive.google.com/file/d/1I9m-sPN2y0ANH1ErBd9x13BdiixzZSd5/view?usp=drivesdk'},
+  {id:63,n:'Anexo 4_EEG 0612.pdf',p:'Victor/Laudos e Exames/2005-2016',c:'Exame de Imagem',t:'PDF',d:'11/05/2016',l:'https://drive.google.com/file/d/1HWSYzK0uDQBd-G89B32f8iW7eAZwNmhZ/view?usp=drivesdk'},
+  {id:64,n:'Anexo 5_EEG 0704.pdf',p:'Victor/Laudos e Exames/2005-2016',c:'Exame de Imagem',t:'PDF',d:'11/05/2016',l:'https://drive.google.com/file/d/1HqjHJGR4VdOvhv5QUsee_Et2FsZ0hw94/view?usp=drivesdk'},
+  {id:65,n:'Anexo 6_EEG 0807.pdf',p:'Victor/Laudos e Exames/2005-2016',c:'Exame de Imagem',t:'PDF',d:'11/05/2016',l:'https://drive.google.com/file/d/1Hf6sUKEPir29txnjcEn8hBz-IQy0CbNo/view?usp=drivesdk'},
+  {id:66,n:'Anexo 7_Laudo Neurológico.pdf',p:'Victor/Laudos e Exames/2005-2016',c:'Laudo & Diagnóstico',t:'PDF',d:'11/05/2016',l:'https://drive.google.com/file/d/1IbrQNyc2YuHkn-2CVgIAQhGL04UbIxTe/view?usp=drivesdk'},
+  {id:67,n:'Anexo 8_fotos.pdf',p:'Victor/Laudos e Exames/2005-2016',c:'Outros',t:'PDF',d:'12/05/2016',l:'https://drive.google.com/file/d/1HZ4JIMDAEprsUsrYHFnPt-vggNLmaQ7z/view?usp=drivesdk'},
+  {id:68,n:'Anexo 9_Laudo Neurológico 1407.pdf',p:'Victor/Laudos e Exames/2005-2016',c:'Laudo & Diagnóstico',t:'PDF',d:'12/05/2016',l:'https://drive.google.com/file/d/1IcO2NbS3dp69q5PuhKj1yK1sJqGEhbDl/view?usp=drivesdk'},
+  {id:69,n:'Anexo17_parecer neurologista.pdf',p:'Victor/Laudos e Exames/2005-2016',c:'Laudo & Diagnóstico',t:'PDF',d:'23/08/2016',l:'https://drive.google.com/file/d/1HC0JuibSC7dqY-AWWY89e15wJmYxIotA/view?usp=drivesdk'},
+  {id:70,n:'TC_abdome.zip',p:'Victor/Laudos e Exames/2025/251129_atendimentoPS',c:'Outros',t:'ZIP',d:'03/12/2025',l:'https://drive.google.com/file/d/1IJIkmPEYzxQaA1JGWgzrvuv6cVKgr8xP/view?usp=drivesdk'},
+  {id:71,n:'TC_abdome_laudo.pdf',p:'Victor/Laudos e Exames/2025/251129_atendimentoPS',c:'Laudo & Diagnóstico',t:'PDF',d:'03/12/2025',l:'https://drive.google.com/file/d/1m8qO_CbmLoOJRfJeFoUT23qjrKW7MxsV/view?usp=drivesdk'},
+  {id:72,n:'TC_cranio.zip',p:'Victor/Laudos e Exames/2025/251129_atendimentoPS',c:'Outros',t:'ZIP',d:'03/12/2025',l:'https://drive.google.com/file/d/1vbe9bh4CiCzDxPmnge5G-OlmTkKPBfDO/view?usp=drivesdk'},
+  {id:73,n:'TC_cranio_laudo.pdf',p:'Victor/Laudos e Exames/2025/251129_atendimentoPS',c:'Laudo & Diagnóstico',t:'PDF',d:'03/12/2025',l:'https://drive.google.com/file/d/1sDjji2KrHMneFrkvk2IZutuGW0tOwGqI/view?usp=drivesdk'},
+  {id:74,n:'TC_torax.zip',p:'Victor/Laudos e Exames/2025/251129_atendimentoPS',c:'Outros',t:'ZIP',d:'03/12/2025',l:'https://drive.google.com/file/d/1pVp8cgAivdrzMK-7h3xd53BptAjtlFoM/view?usp=drivesdk'},
+  {id:75,n:'TC_Torax_Laudo.pdf',p:'Victor/Laudos e Exames/2025/251129_atendimentoPS',c:'Laudo & Diagnóstico',t:'PDF',d:'03/12/2025',l:'https://drive.google.com/file/d/1YQ3NWPvexqv8weMbbeeC68m3v0cFLfrl/view?usp=drivesdk'},
+  {id:76,n:'VICTOR AUGUSTO SENGER (2) - 29-11-2025.pdf',p:'Victor/Laudos e Exames/2025/251129_atendimentoPS',c:'Outros',t:'PDF',d:'03/12/2025',l:'https://drive.google.com/file/d/1X0y49-46PS9pWvPHWsx38QQ25mwcwmvN/view?usp=drivesdk'},
+  {id:77,n:'VICTOR AUGUSTO SENGER (3) - 29-11-2025.pdf',p:'Victor/Laudos e Exames/2025/251129_atendimentoPS',c:'Outros',t:'PDF',d:'03/12/2025',l:'https://drive.google.com/file/d/1DLT80NInL1QOrzP1jEM8zkMyXX2xFzEu/view?usp=drivesdk'},
+  {id:78,n:'VICTOR AUGUSTO SENGER - 29-11-2025.pdf',p:'Victor/Laudos e Exames/2025/251129_atendimentoPS',c:'Outros',t:'PDF',d:'03/12/2025',l:'https://drive.google.com/file/d/1qdCb5uy2S7s9VnKVgN47nYype7TJjMBp/view?usp=drivesdk'},
+  {id:79,n:'Exameurina-250917.pdf',p:'Victor/Laudos e Exames/2025',c:'Exame Laboratorial',t:'PDF',d:'22/10/2025',l:'https://drive.google.com/file/d/1HZyVbno1D1cz5ArzQkpUExwI_2RA6AJz/view?usp=drivesdk'},
+  {id:80,n:'Exameurina_cultura-250911.pdf',p:'Victor/Laudos e Exames/2025',c:'Exame Laboratorial',t:'PDF',d:'22/10/2025',l:'https://drive.google.com/file/d/1UDpz4mx0hdMvr9kQrEzAWXkxzzT-vEtu/view?usp=drivesdk'},
+  {id:81,n:'Exameurina_cultura-251020.pdf',p:'Victor/Laudos e Exames/2025',c:'Exame Laboratorial',t:'PDF',d:'22/10/2025',l:'https://drive.google.com/file/d/19H2x3yJr7zI1NjKPGQr__V4jTSGK2lHa/view?usp=drivesdk'},
+  {id:82,n:'Exameurina_sangue - 251129.pdf',p:'Victor/Laudos e Exames/2025',c:'Exame Laboratorial',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1QeCg2qogQY4Qb4JJWKN_DMUH1Q_QbZU2/view?usp=drivesdk'},
+  {id:83,n:'Exameurina_sangue-251021.pdf',p:'Victor/Laudos e Exames/2025',c:'Exame Laboratorial',t:'PDF',d:'22/10/2025',l:'https://drive.google.com/file/d/1lF-Q5yf0ZjKgiM8JRf_HBgbvzAOXjpKe/view?usp=drivesdk'},
+  {id:84,n:'2608-TC Abdômen.pdf',p:'Victor/Laudos e Exames/2026',c:'Outros',t:'PDF',d:'20/08/2026',l:'https://drive.google.com/file/d/17ccSJFfh1Yaqg4IwXMG2BKGQWGg-zTFV/view?usp=drivesdk'},
+  {id:85,n:'Examedeurina_260715.pdf',p:'Victor/Laudos e Exames/2026',c:'Exame Laboratorial',t:'PDF',d:'17/07/2026',l:'https://drive.google.com/file/d/19zJJnpCOnQLC02_Frh1aLpHvqI4D5DiG/view?usp=drivesdk'},
+  {id:86,n:'Exameurina_260112.pdf',p:'Victor/Laudos e Exames/2026',c:'Exame Laboratorial',t:'PDF',d:'08/03/2026',l:'https://drive.google.com/file/d/1mErU6UyEaYXd_Qu9MuWyogs-d-iHmsEG/view?usp=drivesdk'},
+  {id:87,n:'Exameurina_260113',p:'Victor/Laudos e Exames/2026',c:'Exame Laboratorial',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1tLIpR-j1pXcig-n3D4_6nXKMUbuunuJ2/view?usp=drivesdk'},
+  {id:88,n:'Exameurina_260226.pdf',p:'Victor/Laudos e Exames/2026',c:'Exame Laboratorial',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1yTIXNFdSE6EEwNte7ddjdSv9ZbyApN5N/view?usp=drivesdk'},
+  {id:89,n:'Gasometria_260105.pdf',p:'Victor/Laudos e Exames/2026',c:'Outros',t:'PDF',d:'08/03/2026',l:'https://drive.google.com/file/d/11gOBBouvZJ7d6IoqnB9zot9o3_xnF0nN/view?usp=drivesdk'},
+  {id:90,n:'Hemograma_260104.pdf',p:'Victor/Laudos e Exames/2026',c:'Exame Laboratorial',t:'PDF',d:'08/03/2026',l:'https://drive.google.com/file/d/1WrXe9x7MnEAyLeZXglNY1w_TjreZClff/view?usp=drivesdk'},
+  {id:91,n:'Hemograma_260105.pdf',p:'Victor/Laudos e Exames/2026',c:'Exame Laboratorial',t:'PDF',d:'08/03/2026',l:'https://drive.google.com/file/d/1Gn-AW5xPwGlZlc7mo8P2BrmPQ_u78bd8/view?usp=drivesdk'},
+  {id:92,n:'Hemograma_260106.pdf',p:'Victor/Laudos e Exames/2026',c:'Exame Laboratorial',t:'PDF',d:'08/03/2026',l:'https://drive.google.com/file/d/1QdJkIcAHF7aVgkE9A-GP4_dHnD4AheLC/view?usp=drivesdk'},
+  {id:93,n:'Hemograma_260108.pdf',p:'Victor/Laudos e Exames/2026',c:'Exame Laboratorial',t:'PDF',d:'08/03/2026',l:'https://drive.google.com/file/d/1CQnFm6kBcmkWKnncSQmOadyEXXijYcXW/view?usp=drivesdk'},
+  {id:94,n:'Hemograma_260112.pdf',p:'Victor/Laudos e Exames/2026',c:'Exame Laboratorial',t:'PDF',d:'08/03/2026',l:'https://drive.google.com/file/d/1MLGWiynn2bi9bjmwXWw74bTf5yO2xwK9/view?usp=drivesdk'},
+  {id:95,n:'Hemograma_260304_urina_cropologico.pdf',p:'Victor/Laudos e Exames/2026',c:'Exame Laboratorial',t:'PDF',d:'16/03/2026',l:'https://drive.google.com/file/d/1ZxuA-NIlb_5kCxNeKcMskoypQb3uH5oU/view?usp=drivesdk'},
+  {id:96,n:'TC-Abdomen-260720.pdf',p:'Victor/Laudos e Exames/2026',c:'Outros',t:'PDF',d:'23/07/2026',l:'https://drive.google.com/file/d/1CNPrpTixm-EVIrHT2m-klS5edYbJ_v8F/view?usp=drivesdk'},
+  {id:97,n:'Ficha Médica.zip',p:'Victor/Laudos e Exames',c:'Outros',t:'ZIP',d:'13/05/2016',l:'https://drive.google.com/file/d/1IV2lKu5Glw-t0W1iC1BsnGaRhOUVHZ3H/view?usp=drivesdk'},
+  {id:98,n:'Monitoramento Victor',p:'Victor',c:'Monitoramento',t:'Google Forms',d:'22/10/2025',l:'https://docs.google.com/forms/d/11bLzNOF1VpiPuTTovgDvaguy-iD-CC0MReQgsAV4Tzg/edit?usp=drivesdk'},
+  {id:99,n:'Monitoramento Victor (respostas)',p:'Victor',c:'Monitoramento',t:'Google Sheets',d:'05/12/2025',l:'https://docs.google.com/spreadsheets/d/1k-wpwL-2rzmJCL2S3AMM-Ssh22KvCIoAQPsfuG6uXI4/edit?usp=drivesdk'},
+  {id:100,n:'41069022238457236000124000000000006426020412757953.pdf',p:'Victor/NFs e Recibos/anteriores',c:'Outros',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1owhMtHmI7r4hXjzRZnB89Va6CvHZLmwo/view?usp=drivesdk'},
+  {id:101,n:'boleto_716.pdf',p:'Victor/NFs e Recibos/anteriores',c:'Outros',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1UrKtR6rfGGNU7mOTnCdNUUCSjADuZ5uI/view?usp=drivesdk'},
+  {id:102,n:'Descritivo_de_Reembolso PAE_032024.pdf',p:'Victor/NFs e Recibos/anteriores',c:'Monitoramento',t:'PDF',d:'06/08/2024',l:'https://drive.google.com/file/d/1epIWmHZiKgDmzUufZPK13tDPTV4C7Y4Y/view?usp=drivesdk'},
+  {id:103,n:'NF-Fisioterapia_01.pdf',p:'Victor/NFs e Recibos/anteriores',c:'Outros',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1crccbKWSLUXsXPdxYWLQ0OyWanArwf9J/view?usp=drivesdk'},
+  {id:104,n:'NF-Fisioterapia_02.pdf',p:'Victor/NFs e Recibos/anteriores',c:'Outros',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/19uUzyDLvvwhmlunTzOaFhcdMcAOQZLfi/view?usp=drivesdk'},
+  {id:105,n:'recibo_cudidadora_2407.pdf',p:'Victor/NFs e Recibos/anteriores',c:'Outros',t:'PDF',d:'06/08/2024',l:'https://drive.google.com/file/d/1eY7DS9uOKfsOgpznl68227sKemH72RrV/view?usp=drivesdk'},
+  {id:106,n:'recibo_cuidadora_2406.pdf',p:'Victor/NFs e Recibos/anteriores',c:'Monitoramento',t:'PDF',d:'06/08/2024',l:'https://drive.google.com/file/d/1H3T7D5iek3X06XyoHw8umT0k0ocboUD9/view?usp=drivesdk'},
+  {id:107,n:'Reembolso - cuidador-abril.pdf',p:'Victor/NFs e Recibos/anteriores',c:'Monitoramento',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1cmzmdZPzOYDayT5cz3DDpieXQCClWj2d/view?usp=drivesdk'},
+  {id:108,n:'Reembolso - Jornada Excepcional_assinado.pdf',p:'Victor/NFs e Recibos/anteriores',c:'Outros',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/108_haxoN3nNdS88kcwSXtAxx1QOBMNhz/view?usp=drivesdk'},
+  {id:109,n:'autorizacao_absorventes.jpg',p:'Victor/NFs e Recibos',c:'Outros',t:'PNG',d:'05/02/2026',l:'https://drive.google.com/file/d/18q5sDvXAC_d4bcvSi6H0G5BQxlLMmSvY/view?usp=drivesdk'},
+  {id:110,n:'Cuidadores_junho.pdf',p:'Victor/NFs e Recibos',c:'Monitoramento',t:'PDF',d:'07/07/2026',l:'https://drive.google.com/file/d/1rTtOw9kw43A_H2CuZVjt9SmMaC2KF0g4/view?usp=drivesdk'},
+  {id:111,n:'Descritivo_de_Reembolso PAE_mai-jun.pdf',p:'Victor/NFs e Recibos',c:'Monitoramento',t:'PDF',d:'07/07/2026',l:'https://drive.google.com/file/d/1WC_WYFgs9GBbY5NM_u5yUYopHcjgMYto/view?usp=drivesdk'},
+  {id:112,n:'NFE_20-_20260510955209.pdf',p:'Victor/NFs e Recibos',c:'Outros',t:'PDF',d:'07/07/2026',l:'https://drive.google.com/file/d/1gm5LxkTag9-vxXSyAbAlFY0c1H0VqalM/view?usp=drivesdk'},
+  {id:113,n:'NFE_20-_20260522778083.pdf',p:'Victor/NFs e Recibos',c:'Outros',t:'PDF',d:'07/07/2026',l:'https://drive.google.com/file/d/1Ls-bbdRRT4QVQGzN-9sTPBbhLWqiwyxP/view?usp=drivesdk'},
+  {id:114,n:'NFE_20-_20260522901868.pdf',p:'Victor/NFs e Recibos',c:'Outros',t:'PDF',d:'07/07/2026',l:'https://drive.google.com/file/d/1-xzYMmUZXHlkuTuCIgRN_Djbmd40KM54/view?usp=drivesdk'},
+  {id:115,n:'NFE_20-_20260603964546.pdf',p:'Victor/NFs e Recibos',c:'Outros',t:'PDF',d:'07/07/2026',l:'https://drive.google.com/file/d/1re5QJW2gP_j6gGIB8l4Eh0vcKYYOfq67/view?usp=drivesdk'},
+  {id:116,n:'NFE_20-_20260617634037.pdf',p:'Victor/NFs e Recibos',c:'Outros',t:'PDF',d:'07/07/2026',l:'https://drive.google.com/file/d/1HxEScLbmFY6eFKd6j-uEsV7FVK3Eeydv/view?usp=drivesdk'},
+  {id:117,n:'NFE_20-_20260627479343.pdf',p:'Victor/NFs e Recibos',c:'Outros',t:'PDF',d:'07/07/2026',l:'https://drive.google.com/file/d/1g2ZgPgOe0XquQTNcExgPcKkK1L9rRBYy/view?usp=drivesdk'},
+  {id:118,n:'2024_Pedido Fisio e TO.pdf',p:'Victor/pedidosmedicos',c:'Encaminhamento',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1GUcVPfzk-YKllOwg6tbvoNGG9h13wwMY/view?usp=drivesdk'},
+  {id:119,n:'2024_Pedido O2.pdf',p:'Victor/pedidosmedicos',c:'Encaminhamento',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1NuMObrDuySMBANixgMim3hwnZkOmtNtM/view?usp=drivesdk'},
+  {id:120,n:'2024_Pedido_Fisioterapia.pdf',p:'Victor/pedidosmedicos',c:'Encaminhamento',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1w4nScbh8HSDCwTxHHDyQXiKvIu78Pi5F/view?usp=drivesdk'},
+  {id:121,n:'2024_victor vacinas.pdf',p:'Victor/pedidosmedicos',c:'Documento Pessoal',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1_24cVIGUVGaK6BOYUOZbt_8D_iFjsC5h/view?usp=drivesdk'},
+  {id:122,n:'2025_10_solicitação TO - VICTOR.pdf',p:'Victor/pedidosmedicos',c:'Outros',t:'PDF',d:'19/09/2026',l:'https://drive.google.com/file/d/1mQ6JJibQp8paF8qYZJEbJp1ne5Z_QZ7u/view?usp=drivesdk'},
+  {id:123,n:'2025_Pedido_exames_em.pdf',p:'Victor/pedidosmedicos',c:'Encaminhamento',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1K0rVqTa16HStuTZparyQbLYPT8ZXCpuJ/view?usp=drivesdk'},
+  {id:124,n:'2025_PedidoHomeCare_250109.pdf',p:'Victor/pedidosmedicos',c:'Encaminhamento',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/17O2rd5SwtWOQlPeCixG3EJ8oUW9oewml/view?usp=drivesdk'},
+  {id:125,n:'2025_Relatorio_Neuro 251013.pdf',p:'Victor/pedidosmedicos',c:'Histórico Médico',t:'PDF',d:'01/07/2026',l:'https://drive.google.com/file/d/17SP4WOc-btXRhk789veFbAKoUN613tkZ/view?usp=drivesdk'},
+  {id:126,n:'2025_solicitação TO - VICTOR.pdf',p:'Victor/pedidosmedicos',c:'Outros',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/10uWc_1ImmplgHwbruCGRH3dfJ9NOaLHq/view?usp=drivesdk'},
+  {id:127,n:'2025_Victor Augusto Senger exames.pdf',p:'Victor/pedidosmedicos',c:'Outros',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1bsHQqBVGMRiXFTYd5nrkr_7GbTuxKCNA/view?usp=drivesdk'},
+  {id:128,n:'2025_Victor Augusto Senger fisio.pdf',p:'Victor/pedidosmedicos',c:'Outros',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/12hlRfvz7D17Ko7yEmQNjPiSRx0rrktMM/view?usp=drivesdk'},
+  {id:129,n:'2025_Victor-pedido-fisio-to.pdf',p:'Victor/pedidosmedicos',c:'Encaminhamento',t:'PDF',d:'04/03/2026',l:'https://drive.google.com/file/d/1eU0YitrGfKwQ3Sb6GRczfzN55KipwFrf/view?usp=drivesdk'},
+  {id:130,n:'2026_01_Enema_cartagastro.pdf',p:'Victor/pedidosmedicos',c:'Outros',t:'PDF',d:'19/09/2026',l:'https://drive.google.com/file/d/1N-0-gplifriLWWsRkS-ZShXJt-LW2oPG/view?usp=drivesdk'},
+  {id:131,n:'2026_01_Enema_pedido_draRayssa.pdf',p:'Victor/pedidosmedicos',c:'Encaminhamento',t:'PDF',d:'19/09/2026',l:'https://drive.google.com/file/d/1Spjya9BMmJYAcd_riSEubCOdqCFwut-v/view?usp=drivesdk'},
+  {id:132,n:'2026_01_Enema_receita_draRayssa.pdf',p:'Victor/pedidosmedicos',c:'Outros',t:'PDF',d:'19/09/2026',l:'https://drive.google.com/file/d/1IXH1Guy4iVouMDTbsQg_LxUpp-j2g4P-/view?usp=drivesdk'},
+  {id:133,n:'2026_01_Enema_Receita_proctologista.pdf',p:'Victor/pedidosmedicos',c:'Outros',t:'PDF',d:'19/09/2026',l:'https://drive.google.com/file/d/1yRi2Tzljamg5QYqLnHOlVpOmspDyTHqZ/view?usp=drivesdk'},
+  {id:134,n:'2026_03_Enema glicerol V.A.S..pdf',p:'Victor/pedidosmedicos',c:'Outros',t:'PDF',d:'08/03/2026',l:'https://drive.google.com/file/d/1RFjshpXR7oGZ1Z-RUaM3iGjJi5fSm3At/view?usp=drivesdk'},
+  {id:135,n:'2026_03_Enema-relatório V.A.S.pdf',p:'Victor/pedidosmedicos',c:'Outros',t:'PDF',d:'08/03/2026',l:'https://drive.google.com/file/d/1malxt6s-snZ64BG2xOR7LK2Z0X9MmQ5T/view?usp=drivesdk'},
+  {id:136,n:'2026_04_homecare com tec enf.pdf',p:'Victor/pedidosmedicos',c:'Outros',t:'PDF',d:'19/09/2026',l:'https://drive.google.com/file/d/1SITmQqF1ZOqiuzC-Uqyrnlg4IinLr6iJ/view?usp=drivesdk'},
+  {id:137,n:'2026_06_Formulario_SAD_Unimed.pdf',p:'Victor/pedidosmedicos',c:'Outros',t:'PDF',d:'03/06/2026',l:'https://drive.google.com/file/d/155Y6p6zaFPndPEdXfW3_2GYWSw0eHe9N/view?usp=drivesdk'},
+  {id:138,n:'2026_07_Enema-julho.pdf',p:'Victor/pedidosmedicos',c:'Outros',t:'PDF',d:'19/09/2026',l:'https://drive.google.com/file/d/1lcXoUd6V3599facRZcB47UITwrWpQqG3/view?usp=drivesdk'},
+  {id:139,n:'2026_08_pedido-nutricionista.pdf',p:'Victor/pedidosmedicos',c:'Encaminhamento',t:'PDF',d:'19/09/2026',l:'https://drive.google.com/file/d/1uotOVV59Yia46T6C7M3V2I8OwBRhe1PY/view?usp=drivesdk'},
+  {id:140,n:'FORMULÁRIO PADRÃO- MÉDICO NÃO COOPERADO 6 _preenchido.pdf',p:'Victor/pedidosmedicos',c:'Monitoramento',t:'PDF',d:'01/07/2026',l:'https://drive.google.com/file/d/1gu4o0NdGurLNnwLG2qIVOQZ2bdHj5Q_G/view?usp=drivesdk'},
+  {id:141,n:'Pedido_exames_em.pdf',p:'Victor/pedidosmedicos',c:'Encaminhamento',t:'PDF',d:'22/10/2025',l:'https://drive.google.com/file/d/1EXNV1UC1_njHjJg8h2DeYC-l_AUqbDrJ/view?usp=drivesdk'},
+  {id:142,n:'prontuario_2511.pdf',p:'Victor/prontuários',c:'Outros',t:'PDF',d:'05/08/2026',l:'https://drive.google.com/file/d/11e1D3ebk1NVC6wHHCzbL1gqNvJVaORDe/view?usp=drivesdk'},
+  {id:143,n:'prontuario_2512.pdf',p:'Victor/prontuários',c:'Outros',t:'PDF',d:'05/08/2026',l:'https://drive.google.com/file/d/17JMuP-504aXE9oyKlP0Lp4XZlazIURFL/view?usp=drivesdk'},
+  {id:144,n:'prontuario_2601.pdf',p:'Victor/prontuários',c:'Outros',t:'PDF',d:'05/08/2026',l:'https://drive.google.com/file/d/1_v52FMNY9PbHXY5-Cvog79sD3aIrDDDh/view?usp=drivesdk'},
+  {id:145,n:'prontuario_2602.pdf',p:'Victor/prontuários',c:'Outros',t:'PDF',d:'05/08/2026',l:'https://drive.google.com/file/d/1nZMdh_AkoYbEVs7jh3bsmywm3K9JynmX/view?usp=drivesdk'},
+  {id:146,n:'prontuario_2603',p:'Victor/prontuários',c:'Outros',t:'PDF',d:'05/08/2026',l:'https://drive.google.com/file/d/12MIfK4n8Aw0HB1BGut1hp_kiaveLSf2q/view?usp=drivesdk'},
+  {id:147,n:'prontuario_2605.pdf',p:'Victor/prontuários',c:'Outros',t:'PDF',d:'05/08/2026',l:'https://drive.google.com/file/d/1sjSYsGrMVxhaI89-nMZd2awOd2BvF2Ra/view?usp=drivesdk'},
+  {id:148,n:'prontuario_2606.pdf',p:'Victor/prontuários',c:'Outros',t:'PDF',d:'15/07/2026',l:'https://drive.google.com/file/d/1Hs-Qs7HPhfSBui73Hvla4oB41Y-4s-Ng/view?usp=drivesdk'},
+  {id:149,n:'prontuario_2607.pdf',p:'Victor/prontuários',c:'Outros',t:'PDF',d:'05/08/2026',l:'https://drive.google.com/file/d/1BUkACqp8Szbr8IQvk3dA_o8Puf2oujeD/view?usp=drivesdk'},
+  {id:150,n:'Anexo 16_relatório crises.pdf',p:'Victor/relatórios de crise',c:'Outros',t:'PDF',d:'12/05/2016',l:'https://drive.google.com/file/d/1HEkvolBh6g6Ap5xpeoXqxYFB2NCx5afy/view?usp=drivesdk'},
+  {id:151,n:'export_cda.xml',p:'Victor/relatórios de crise',c:'Outros',t:'XML',d:'27/03/2026',l:'https://drive.google.com/file/d/1jTEILAOOxd8t4QfKBBmlF3RYtJdmCNPj/view?usp=drivesdk'},
+  {id:152,n:'exportar.xml',p:'Victor/relatórios de crise',c:'Outros',t:'XML',d:'27/03/2026',l:'https://drive.google.com/file/d/1KS08aHoDJzvZWf0bbpalzRfQzNZMrQa9/view?usp=drivesdk'},
+  {id:153,n:'Seizures.csv',p:'Victor/relatórios de crise',c:'Outros',t:'CSV',d:'16/03/2026',l:'https://drive.google.com/file/d/1j1NQR33qS5ADqTKRRltC9lF5pekRPWKG/view?usp=drivesdk'},
+  {id:154,n:'Victor_RG.pdf',p:'Victor',c:'Documento Pessoal',t:'PDF',d:'18/09/2025',l:'https://drive.google.com/file/d/14QdIiyT3qjFRremMRkks9-h-eXX7rg8B/view?usp=drivesdk'},
+  {id:155,n:'WhatsApp Chat - Homedical.zip',p:'Victor',c:'Outros',t:'ZIP',d:'31/03/2026',l:'https://drive.google.com/file/d/17Px9I8NNWza3JXWJTRCb60ZAty_DsJR1/view?usp=drivesdk'}
+];
+
+const CAT_COLOR={
+  'Exame Laboratorial':'#06b6d4','Exame de Imagem':'#8b5cf6',
+  'Laudo & Diagnóstico':'#f59e0b','Histórico Médico':'#10b981',
+  'Encaminhamento':'#3b82f6','Documento Pessoal':'#ec4899',
+  'Monitoramento':'#84cc16','Outros':'#6b7280'
+};
+const CAT_ICON={
+  'Exame Laboratorial':'🧪','Exame de Imagem':'🫁','Laudo & Diagnóstico':'📋',
+  'Histórico Médico':'📖','Encaminhamento':'📤','Documento Pessoal':'🪪',
+  'Monitoramento':'📊','Outros':'📁'
+};
+
+// ══ TABS ══
+function showTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='docs')renderDocs();
+}
+
+// ══ DOCS ══
+let docsInit=false, catFil='', pastaFil='';
+function renderDocs(){
+  if(docsInit)return;
+  docsInit=true;
+  // categorias
+  const cats=[...new Set(DOCS.map(d=>d.c))].sort();
+  const sel=document.getElementById('selCat');
+  cats.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+  // pastas
+  const pastas=[...new Set(DOCS.map(d=>d.p.replace('Victor/','').split('/')[0]))].sort();
+  const selP=document.getElementById('selPasta');
+  pastas.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p==='Victor'?'Raiz':p;selP.appendChild(o);});
+  // chips
+  const catCount={};DOCS.forEach(d=>{catCount[d.c]=(catCount[d.c]||0)+1;});
+  const chips=document.getElementById('chips');
+  cats.forEach(c=>{
+    const b=document.createElement('button');
+    b.className='chip';b.dataset.cat=c;
+    b.innerHTML=`${CAT_ICON[c]||'📁'} <b>${catCount[c]}</b> <span style="color:var(--dim);font-size:10px">${c}</span>`;
+    b.style.borderColor=CAT_COLOR[c]+'66';
+    b.onclick=()=>{catFil=catFil===c?'':c;document.getElementById('selCat').value=catFil;renderList();updateChips();};
+    chips.appendChild(b);
+  });
+  renderList();
+}
+function updateChips(){
+  document.querySelectorAll('.chip').forEach(c=>{
+    const sel=c.dataset.cat===catFil;
+    c.classList.toggle('sel',sel);
+    const col=CAT_COLOR[c.dataset.cat]||'#6b7280';
+    c.style.background=sel?(col+'22'):'none';
+    c.style.color=sel?col:'var(--dim)';
+    c.style.borderColor=sel?col:(col+'66');
+  });
+}
+function filtrar(){
+  catFil=document.getElementById('selCat').value;
+  pastaFil=document.getElementById('selPasta').value;
+  updateChips();renderList();
+}
+function renderList(){
+  const q=(document.getElementById('busca').value||'').toLowerCase();
+  const list=DOCS.filter(d=>{
+    if(q&&!d.n.toLowerCase().includes(q)&&!d.p.toLowerCase().includes(q))return false;
+    if(catFil&&d.c!==catFil)return false;
+    if(pastaFil){const p=d.p.replace('Victor/','').split('/')[0];const lbl=p==='Victor'?'Victor':p;if(lbl!==pastaFil&&p!==pastaFil)return false;}
+    return true;
+  });
+  document.getElementById('docCount').textContent=`${list.length} arquivo${list.length!==1?'s':''} de ${DOCS.length}`;
+  const el=document.getElementById('docList');
+  el.innerHTML='';
+  if(!list.length){el.innerHTML='<div style="text-align:center;color:var(--dim);padding:40px">Nenhum arquivo encontrado</div>';return;}
+  list.forEach(d=>{
+    const col=CAT_COLOR[d.c]||'#6b7280';
+    const icon=CAT_ICON[d.c]||'📁';
+    const pasta=d.p.replace('Victor/','').replace('Victor','Raiz');
+    el.innerHTML+=`<a class="doc-item" href="${d.l}" target="_blank" rel="noopener">
+      <div class="doc-icon">${icon}</div>
+      <div style="flex:1;min-width:0">
+        <div class="doc-nome">${d.n}</div>
+        <div class="doc-meta">
+          <span class="doc-cat" style="background:${col}22;color:${col};border:1px solid ${col}44">${icon} ${d.c}</span>
+          <span class="doc-pasta">${pasta}</span>
+          <span class="doc-data">${d.d}</span>
+          ${d.t?`<span class="doc-tipo">${d.t}</span>`:''}
+        </div>
+      </div>
+      <span class="doc-arrow">↗</span>
+    </a>`;
+  });
+}
+</script>
+</body>
+</html>
